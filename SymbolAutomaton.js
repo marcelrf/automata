@@ -1,16 +1,13 @@
-var Automaton = require("Automaton");
-
 function SymbolAutomaton (descriptor) {
-    Automaton.apply(this, [descriptor]);
-    this.state = this.states.PARSING;
+    this.pattern = descriptor.pattern;
+    this.state = "parsing";
 }
 
 SymbolAutomaton.prototype.parse = function (symbol) {
-    if (this.state === this.states.PARSING &&
-        match(this.descriptor.pattern, symbol)) {
-        this.state = this.states.ACCEPTING;
+    if (this.state === "parsing" && match(this.pattern, symbol)) {
+        this.state = "accepting";
     } else {
-        this.state = this.states.STOPPED;
+        this.state = "stopped";
     }
 };
 
@@ -20,7 +17,7 @@ function match (pattern, data) {
 
     if (patternType === "Object") {
         if (dataType === "Object") {
-            return everyEachOwnProperty(pattern, function (value, prop) {
+            return everyOwnProperty(pattern, function (value, prop) {
                 return match(value, data[prop]);
             });
         } else {
@@ -63,7 +60,7 @@ function getType (value) {
     return valueType.split(" ")[1].slice(0, -1);
 }
 
-function everyEachOwnProperty (obj, fn) {
+function everyOwnProperty (obj, fn) {
     for (var prop in obj) {
         if (obj.hasOwnProperty(prop)) {
             if (!fn(obj[prop], prop)) {
