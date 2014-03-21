@@ -1,26 +1,28 @@
+var utils = require("utils");
+
 var infiniteAutomatonError = {
     name: "Infinite Automaton Error",
-    message: "RepeatAutomaton does not support operands with accepting initial states."
-}
+    message: "RepeatAutomaton does not support annullable operands."
+};
 
 function RepeatAutomaton (descriptor) {
     this.descriptor = descriptor.operand;
     this.minimum = descriptor.minimum;
     this.maximum = descriptor.maximum;
     this.automata = {};
-    launchAutomaton(this.automata, this.descriptor, 1);
-    this.state = getState(this.automata, this.minimum, this.maximum);
+    launchAutomaton.call(this, 1);
+    this.state = getState.call(this);
 }
 
 RepeatAutomaton.prototype.parse = function (symbol) {
     // make all automatons parse the symbol
-    forEachOwnProperty(this.automata, function (level) {
+    utils.forEachOwnProperty(this.automata, function (level) {
         level.forEach(function (automaton) {
             automaton.parse(symbol);
         });
     });
     // remove stopped automatons
-    forEachOwnProperty(this.automata, function (level, index) {
+    utils.forEachOwnProperty(this.automata, function (level, index) {
         this.automata[index] = level.filter(function (automaton) {
             return automaton.state !== "stopped";
         });
@@ -29,34 +31,34 @@ RepeatAutomaton.prototype.parse = function (symbol) {
         }
     });
     // when level i accepts, launch automaton for level i+1
-    forEachOwnProperty(this.automata, function (level, index) {
+    utils.forEachOwnProperty(this.automata, function (level, index) {
         var accepting = this.automata[index].some(function (automaton) {
             return automaton.state === "accepting";
         });
         if (accepting) {
-            launchAutomaton(this.automata, this.descriptors, index + 1);
+            launchAutomaton.call(this, index + 1);
         }
     });
-    this.state = getState(this.automata, this.minimum, this.maximum);
+    this.state = getState.call(this);
 };
 
-function launchAutomaton (automata, descriptor, level) {
-    var automaton = descriptor.newAutomaton();
-    if (automaton.state !== "stopped") {
-        if (!automata[level]) { automata[level] = []; }
-        automata[level].push(automaton);
-        if (automaton.state === "accepting") {
-            throw infiniteAutomatonError;
-        }
+function launchAutomaton (level) {
+    var automaton = this.descriptor.newAutomaton();
+    if (automaton.state === "accepting") {
+        // TODO: this situation could be detected in descriptor time (annullable)
+        throw infiniteAutomatonError;
+    } else if (automaton.state === "parsing") {
+        if (!this.automata[level]) { this.automata[level] = []; }
+        this.automata[level].push(automaton);
     }
 }
 
-function getState (automata, minimum, maximum) {
+function getState () {
     var count = 0,
         accepting = false;
-    forEachOwnProperty(automata, function (level, index) {
+    utils.forEachOwnProperty(this.automata, function (level, index) {
         count += level.length;
-        if (index >= minimum && index <= maximum) {
+        if (index >= this.minimum && index <= this.maximum) {
             accepting = accepting || level.some(function (automaton) {
                 return automaton.state === "accepting";
             });
@@ -65,14 +67,6 @@ function getState (automata, minimum, maximum) {
     if (accepting) { return "accepting"; }
     else if (count > 0) { return "parsing"; }
     else { return "stopped"; }
-}
-
-function forEachOwnProperty (obj, fn) {
-    for (var prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-            fn(obj[prop], prop);
-        }
-    }
 }
 
 module.exports = RepeatAutomaton;

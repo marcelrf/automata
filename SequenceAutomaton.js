@@ -3,8 +3,8 @@ function SequenceAutomaton (descriptor) {
     this.automata = this.descriptors.map(function () {
         return [];
     });
-    launchAutomaton(this.automata, this.descriptors, 0);
-    this.state = getState(this.automata);
+    launchAutomaton.call(this, 0);
+    this.state = getState.call(this);
 }
 
 SequenceAutomaton.prototype.parse = function (symbol) {
@@ -26,31 +26,31 @@ SequenceAutomaton.prototype.parse = function (symbol) {
             return automaton.state === "accepting";
         });
         if (accepting && level + 1 < this.automata.length) {
-            launchAutomaton(this.automata, this.descriptors, level + 1);
+            launchAutomaton.call(this, level + 1);
         }
     }
-    this.state = getState(this.automata);
+    this.state = getState.call(this);
 };
 
-function launchAutomaton (automata, descriptors, level) {
-    var automaton = descriptors[level].newAutomaton();
+function launchAutomaton (level) {
+    var automaton = this.descriptors[level].newAutomaton();
     if (automaton.state !== "stopped") {
-        automata[level].push(automaton);
-        if (automaton.state === "accepting" && level + 1 < automata.length) {
-            launchAutomaton(automata, descriptors, level + 1);
+        this.automata[level].push(automaton);
+        if (automaton.state === "accepting" && level + 1 < this.automata.length) {
+            launchAutomaton.call(level + 1);
         }
     }
 }
 
-function getState (automata) {
+function getState () {
     var count = 0;
-    automata.forEach(function (level) {
+    this.automata.forEach(function (level) {
         count += level.length;
     });
     if (count === 0) {
         return "stopped";
     }
-    var lastLevel = automata[automata.length - 1];
+    var lastLevel = this.automata[this.automata.length - 1];
     for (var i = 0; i < lastLevel.length; i++) {
         if (lastLevel[i].state === "accepting") {
             return "accepting";

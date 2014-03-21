@@ -1,3 +1,5 @@
+var utils = require("utils");
+
 function SymbolAutomaton (descriptor) {
     this.pattern = descriptor.pattern;
     this.state = "parsing";
@@ -12,12 +14,14 @@ SymbolAutomaton.prototype.parse = function (symbol) {
 };
 
 function match (pattern, data) {
-    var patternType = getType(pattern),
-        dataType = getType(data);
+    var patternType = utils.getType(pattern),
+        dataType = utils.getType(data);
 
     if (patternType === "Object") {
         if (dataType === "Object") {
-            return everyOwnProperty(pattern, function (value, prop) {
+            // matches when all pattern own properties
+            // match with the corresponding data properties
+            return utils.everyOwnProperty(pattern, function (value, prop) {
                 return match(value, data[prop]);
             });
         } else {
@@ -26,6 +30,8 @@ function match (pattern, data) {
     }
     else if (patternType === "Array") {
         if (dataType === "Array" && pattern.length === data.length) {
+            // matches when pattern and data have the same length
+            // and all pattern elements match the corresponding data elements
             for (var i = 0; i < pattern.length; i++) {
                 if (!match(pattern[i], data[i])) {
                     return false;
@@ -38,37 +44,28 @@ function match (pattern, data) {
     }
     else if (patternType === "Function") {
         if (dataType === "Function") {
-            return "" + pattern === "" + data;
+            // calls the pattern function with the data as only parameter
+            // and matches when the returned value evaluates to true
+            return !!pattern(data);
         } else {
             return false;
         }
     }
     else if (patternType === "RegExp") {
         if (dataType === "String") {
+            // matches when the data string matches the pattern
             return !!data.match(pattern);
+        } else if (dataType == "RegExp") {
+            // matches when the regexps are equal
+            return pattern === data;
         } else {
             return false;
         }
     }
     else {
+        // matches when the elements are equal
         return pattern === data;
     }
-}
-
-function getType (value) {
-    var valueType = Object.prototype.toString.call(value);
-    return valueType.split(" ")[1].slice(0, -1);
-}
-
-function everyOwnProperty (obj, fn) {
-    for (var prop in obj) {
-        if (obj.hasOwnProperty(prop)) {
-            if (!fn(obj[prop], prop)) {
-                return false;
-            }
-        }
-    }
-    return true;
 }
 
 module.exports = SymbolAutomaton;

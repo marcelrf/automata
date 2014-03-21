@@ -4,25 +4,25 @@ function ParallelAutomaton (descriptor) {
     });
     this.minimum = descriptor.minimum;
     this.maximum = descriptor.maximum;
-    this.state = getState(this.automata, this.minimum, this.maximum);
+    this.state = getState.call(this);
 }
 
 ParallelAutomaton.prototype.parse = function (symbol) {
     this.automata.forEach(function (automaton) {
         automaton.parse(symbol);
     });
-    this.state = getState(this.automata, this.minimum, this.maximum);
+    this.state = getState.call(this);
 };
 
-function getState (automata, minimum, maximum) {
+function getState () {
     var count = {};
-    automata.forEach(function (automaton) {
+    this.automata.forEach(function (automaton) {
         count[automaton.state] = count[automaton.state] + 1 || 1;
     });
-    if (count["accepting"] >= minimum &&
-        count["accepting"] <= maximum) {
+    if (count["accepting"] >= this.minimum &&
+        count["accepting"] <= this.maximum) {
         return "accepting";
-    } else if (count["accepting"] + count["parsing"] >= minimum) {
+    } else if (count["accepting"] + count["parsing"] >= this.minimum) {
         return "parsing";
     } else {
         return "stopped";
