@@ -1,4 +1,4 @@
-var utils = require("utils");
+var utils = require("./utils");
 
 var infiniteAutomatonError = {
     name: "Infinite Automaton Error",
@@ -15,6 +15,7 @@ function RepeatAutomaton (descriptor) {
 }
 
 RepeatAutomaton.prototype.parse = function (symbol) {
+    var that = this;
     // make all automatons parse the symbol
     utils.forEachOwnProperty(this.automata, function (level) {
         level.forEach(function (automaton) {
@@ -23,20 +24,20 @@ RepeatAutomaton.prototype.parse = function (symbol) {
     });
     // remove stopped automatons
     utils.forEachOwnProperty(this.automata, function (level, index) {
-        this.automata[index] = level.filter(function (automaton) {
+        that.automata[index] = level.filter(function (automaton) {
             return automaton.state !== "stopped";
         });
-        if (this.automata[index].length === 0) {
-            delete this.automata[index];
+        if (that.automata[index].length === 0) {
+            delete that.automata[index];
         }
     });
     // when level i accepts, launch automaton for level i+1
     utils.forEachOwnProperty(this.automata, function (level, index) {
-        var accepting = this.automata[index].some(function (automaton) {
+        var accepting = that.automata[index].some(function (automaton) {
             return automaton.state === "accepting";
         });
         if (accepting) {
-            launchAutomaton.call(this, index + 1);
+            launchAutomaton.call(that, index + 1);
         }
     });
     this.state = getState.call(this);
@@ -55,10 +56,11 @@ function launchAutomaton (level) {
 
 function getState () {
     var count = 0,
-        accepting = false;
+        accepting = false,
+        that = this;
     utils.forEachOwnProperty(this.automata, function (level, index) {
         count += level.length;
-        if (index >= this.minimum && index <= this.maximum) {
+        if (index >= that.minimum && index <= that.maximum) {
             accepting = accepting || level.some(function (automaton) {
                 return automaton.state === "accepting";
             });

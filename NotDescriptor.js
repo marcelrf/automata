@@ -1,4 +1,4 @@
-var NotAutomaton = require("NotAutomaton");
+var NotAutomaton = require("./NotAutomaton");
 
 function NotDescriptor (descriptor) {
     this.operand = descriptor;

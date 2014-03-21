@@ -1,4 +1,4 @@
-var SequenceAutomaton = require("SequenceAutomaton");
+var SequenceAutomaton = require("./SequenceAutomaton");
 
 function SequenceDescriptor () {
     this.operands = Array.prototype.slice.call(arguments);

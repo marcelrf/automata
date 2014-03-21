@@ -1,4 +1,4 @@
-var RepeatAutomaton = require("RepeatAutomaton");
+var RepeatAutomaton = require("./RepeatAutomaton");
 
 function RepeatDescriptor (minimum, maximum, descriptor) {
     this.minimum = minimum;

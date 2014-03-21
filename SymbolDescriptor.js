@@ -1,4 +1,4 @@
-var SymbolAutomaton = require("SymbolAutomaton");
+var SymbolAutomaton = require("./SymbolAutomaton");
 
 function SymbolDescriptor (pattern) {
     this.pattern = pattern;

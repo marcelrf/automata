@@ -1,4 +1,4 @@
-var ParallelAutomaton = require("ParallelAutomaton");
+var ParallelAutomaton = require("./ParallelAutomaton");
 
 function ParallelDescriptor () {
 	var args = Array.prototype.slice.call(arguments);
