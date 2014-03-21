@@ -1,6 +1,6 @@
 function ParallelAutomaton (descriptor) {
-    this.automata = this.descriptor.operands.map(function (descriptor) {
-        return descriptor.newAutomaton();
+    this.automata = descriptor.operands.map(function (operand) {
+        return operand.newAutomaton();
     });
     this.minimum = descriptor.minimum;
     this.maximum = descriptor.maximum;
@@ -15,7 +15,11 @@ ParallelAutomaton.prototype.parse = function (symbol) {
 };
 
 function getState () {
-    var count = {};
+    var count = {
+        "accepting": 0,
+        "parsing": 0,
+        "stopped": 0
+    };
     this.automata.forEach(function (automaton) {
         count[automaton.state] = count[automaton.state] + 1 || 1;
     });

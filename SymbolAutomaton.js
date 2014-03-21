@@ -43,13 +43,9 @@ function match (pattern, data) {
         }
     }
     else if (patternType === "Function") {
-        if (dataType === "Function") {
-            // calls the pattern function with the data as only parameter
-            // and matches when the returned value evaluates to true
-            return !!pattern(data);
-        } else {
-            return false;
-        }
+        // calls the pattern function with the data as only parameter
+        // and matches when the returned value evaluates to true
+        return !!pattern(data);
     }
     else if (patternType === "RegExp") {
         if (dataType === "String") {

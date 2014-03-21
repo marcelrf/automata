@@ -1,5 +1,5 @@
 function NotAutomaton (descriptor) {
-    this.automaton = this.descriptor.operand.newAutomaton();
+    this.automaton = descriptor.operand.newAutomaton();
     this.state = getState.call(this);
 }
 

@@ -11,7 +11,11 @@ function RepeatAutomaton (descriptor) {
     this.maximum = descriptor.maximum;
     this.automata = {};
     launchAutomaton.call(this, 1);
-    this.state = getState.call(this);
+    if (this.minimum === 0) {
+        this.state = "accepting";
+    } else {
+        this.state = getState.call(this);
+    }
 }
 
 RepeatAutomaton.prototype.parse = function (symbol) {

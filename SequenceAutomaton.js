@@ -37,7 +37,7 @@ function launchAutomaton (level) {
     if (automaton.state !== "stopped") {
         this.automata[level].push(automaton);
         if (automaton.state === "accepting" && level + 1 < this.automata.length) {
-            launchAutomaton.call(level + 1);
+            launchAutomaton.call(this, level + 1);
         }
     }
 }
