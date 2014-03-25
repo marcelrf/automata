@@ -3,6 +3,8 @@ var utils = require("./utils");
 function SymbolAutomaton (descriptor) {
     this.pattern = descriptor.pattern;
     this.state = "parsing";
+    this.callbacks = descriptor.callbacks.slice();
+    this.parsed = [];
 }
 
 SymbolAutomaton.prototype.parse = function (symbol) {

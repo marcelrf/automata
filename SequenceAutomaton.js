@@ -1,3 +1,5 @@
+var utils = require("./utils");
+
 function SequenceAutomaton (descriptor) {
     this.descriptors = descriptor.operands;
     this.automata = this.descriptors.map(function () {
@@ -5,6 +7,8 @@ function SequenceAutomaton (descriptor) {
     });
     launchAutomaton.call(this, 0);
     this.state = getState.call(this);
+    this.callbacks = descriptor.callbacks.slice();
+    this.parsed = [];
 }
 
 SequenceAutomaton.prototype.parse = function (symbol) {
@@ -14,6 +18,7 @@ SequenceAutomaton.prototype.parse = function (symbol) {
             automaton.parse(symbol);
         });
     });
+    this.parsed.push(symbol);
     // remove stopped automatons
     for (var level = 0; level < this.automata.length; level++) {
         this.automata[level] = this.automata[level].filter(function (automaton) {
@@ -30,6 +35,9 @@ SequenceAutomaton.prototype.parse = function (symbol) {
         }
     }
     this.state = getState.call(this);
+    if (this.state === "accepting") {
+        utils.executeFunctions(this.callbacks, [this.parsed]);
+    }
 };
 
 function launchAutomaton (level) {

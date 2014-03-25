@@ -1,3 +1,5 @@
+var utils = require("./utils");
+
 function ParallelAutomaton (descriptor) {
     this.automata = descriptor.operands.map(function (operand) {
         return operand.newAutomaton();
@@ -5,13 +7,19 @@ function ParallelAutomaton (descriptor) {
     this.minimum = descriptor.minimum;
     this.maximum = descriptor.maximum;
     this.state = getState.call(this);
+    this.callbacks = descriptor.callbacks.slice();
+    this.parsed = [];
 }
 
 ParallelAutomaton.prototype.parse = function (symbol) {
     this.automata.forEach(function (automaton) {
         automaton.parse(symbol);
     });
+    this.parsed.push(symbol);
     this.state = getState.call(this);
+    if (this.state === "accepting") {
+        utils.executeFunctions(this.callbacks, [this.parsed]);
+    }
 };
 
 function getState () {

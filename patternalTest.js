@@ -10,24 +10,24 @@ var p = require("./patternal"),
     ANY = p.ANY,
     RANY = Rep(0, Infinity, ANY),
 
-    marcelOrPablo = Or(Sym(/[Mm]arcel/), Sym(/[Pp]ablo/));
-    withName = Not(Seq(RANY, marcelOrPablo)),
-    automaton = withName.newAutomaton();
+
+    click = Sym({type: "click"}),
+    specialClick= Sym({type: "click", special: true}),
+    purchase = Sym({type: "purchase"}),
+    threeClicksAndOnePurchase = Seq(RANY, click, click, click, purchase),
+    containsSpecialClick = Seq(RANY, specialClick, RANY),
+    oneAndTheOther = And(threeClicksAndOnePurchase, containsSpecialClick),
+    automaton = Not(oneAndTheOther).newAutomaton();
 
 console.log("Initial", automaton.state);
-automaton.parse("Marcel");
-console.log("After Marcel", automaton.state);
-automaton.parse(",");
-console.log("After ,", automaton.state);
-automaton.parse("como");
-console.log("After como", automaton.state);
-automaton.parse("você");
-console.log("After você", automaton.state);
-automaton.parse("está");
-console.log("After está", automaton.state);
-automaton.parse(",");
-console.log("After ,", automaton.state);
-automaton.parse("Pablo");
-console.log("After Pablo", automaton.state);
-automaton.parse("?");
-console.log("After ?", automaton.state);
+automaton.parse({type: "click", special: true});
+console.log("After click 1", automaton.state);
+automaton.parse({type: "click"});
+console.log("After click 2", automaton.state);
+automaton.parse({type: "click"});
+console.log("After click 3", automaton.state);
+automaton.parse({type: "purchase"});
+console.log("After purchase", automaton.state);
+automaton.parse({type: "purchase"});
+console.log("After purchase", automaton.state);
+

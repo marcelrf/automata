@@ -16,6 +16,8 @@ function RepeatAutomaton (descriptor) {
     } else {
         this.state = getState.call(this);
     }
+    this.callbacks = descriptor.callbacks.slice();
+    this.parsed = [];
 }
 
 RepeatAutomaton.prototype.parse = function (symbol) {
@@ -26,6 +28,7 @@ RepeatAutomaton.prototype.parse = function (symbol) {
             automaton.parse(symbol);
         });
     });
+    this.parsed.push(symbol);
     // remove stopped automatons
     utils.forEachOwnProperty(this.automata, function (level, index) {
         that.automata[index] = level.filter(function (automaton) {
@@ -45,6 +48,9 @@ RepeatAutomaton.prototype.parse = function (symbol) {
         }
     });
     this.state = getState.call(this);
+    if (this.state === "accepting") {
+        utils.executeFunctions(this.callbacks, [this.parsed]);
+    }
 };
 
 function launchAutomaton (level) {

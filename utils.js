@@ -17,6 +17,12 @@ function everyOwnProperty (obj, fn) {
     return true;
 }
 
+function executeFunctions (fnArray, params) {
+    fnArray.forEach(function (fn) {
+        fn.apply(null, params);
+    });
+}
+
 function getType (value) {
     var valueType = Object.prototype.toString.call(value);
     return valueType.split(" ")[1].slice(0, -1);
