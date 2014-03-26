@@ -11,6 +11,7 @@ NotDescriptor.prototype.newAutomaton = function () {
 
 NotDescriptor.prototype.whenever = function (callback) {
     this._callbacks.push(callback);
+    return this;
 };
 
 module.exports = NotDescriptor;

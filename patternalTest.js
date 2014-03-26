@@ -10,18 +10,16 @@ var p = require("./patternal"),
     ANY = p.ANY,
     RANY = Rep(0, Infinity, ANY),
 
+    printParsed = function (parsed) { console.log(parsed); },
+
     click = Sym({type: "click"}),
     specialClick= Sym({type: "click", special: true}),
     purchase = Sym({type: "purchase"}),
     threeClicksAndOnePurchase = Seq(RANY, click, click, click, purchase),
     containsSpecialClick = Seq(RANY, specialClick, RANY),
-    oneAndTheOther = And(threeClicksAndOnePurchase, containsSpecialClick);
+    oneAndTheOther = And(threeClicksAndOnePurchase, containsSpecialClick).whenever(printParsed),
 
-    oneAndTheOther.whenever(function (parsed) {
-        console.log(parsed);
-    });
-
-    var automaton = oneAndTheOther.newAutomaton();
+    automaton = oneAndTheOther.newAutomaton();
 
 console.log("Initial", automaton.state);
 automaton.parse({type: "click", special: true});

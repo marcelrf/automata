@@ -11,6 +11,7 @@ SequenceDescriptor.prototype.newAutomaton = function () {
 
 SequenceDescriptor.prototype.whenever = function (callback) {
     this._callbacks.push(callback);
+    return this;
 };
 
 module.exports = SequenceDescriptor;

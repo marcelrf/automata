@@ -14,6 +14,7 @@ ParallelDescriptor.prototype.newAutomaton = function () {
 
 ParallelDescriptor.prototype.whenever = function (callback) {
     this._callbacks.push(callback);
+    return this;
 };
 
 module.exports = ParallelDescriptor;

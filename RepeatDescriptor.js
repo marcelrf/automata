@@ -13,6 +13,7 @@ RepeatDescriptor.prototype.newAutomaton = function () {
 
 RepeatDescriptor.prototype.whenever = function (callback) {
     this._callbacks.push(callback);
+    return this;
 };
 
 module.exports = RepeatDescriptor;
