@@ -2,10 +2,10 @@ var ParallelAutomaton = require("./ParallelAutomaton");
 
 function ParallelDescriptor () {
 	var args = Array.prototype.slice.call(arguments);
-    this.minimum = args.shift();
-    this.maximum = args.shift();
-    this.operands = args;
-    this.callbacks = [];
+    this._minimum = args.shift();
+    this._maximum = args.shift();
+    this._operands = args;
+    this._callbacks = [];
 }
 
 ParallelDescriptor.prototype.newAutomaton = function () {
@@ -13,7 +13,7 @@ ParallelDescriptor.prototype.newAutomaton = function () {
 };
 
 ParallelDescriptor.prototype.whenever = function (callback) {
-    this.callback.push(callback);
+    this._callbacks.push(callback);
 };
 
 module.exports = ParallelDescriptor;

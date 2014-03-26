@@ -34,10 +34,10 @@ function OrConstructor () {
 var ANY = new SymbolDescriptor(function () { return true; });
 
 module.exports = {
-    Symbol: DescriptorConstructor(SymbolDescriptor),
-    Sequence: DescriptorConstructor(SequenceDescriptor),
-    Parallel: DescriptorConstructor(ParallelDescriptor),
-    Repeat: DescriptorConstructor(RepeatDescriptor),
+    Sym: DescriptorConstructor(SymbolDescriptor),
+    Seq: DescriptorConstructor(SequenceDescriptor),
+    Par: DescriptorConstructor(ParallelDescriptor),
+    Rep: DescriptorConstructor(RepeatDescriptor),
     Not: DescriptorConstructor(NotDescriptor),
     And: AndConstructor,
     Or: OrConstructor,

@@ -1,17 +1,21 @@
 var utils = require("./utils");
 
 function SymbolAutomaton (descriptor) {
-    this.pattern = descriptor.pattern;
+    this._pattern = descriptor._pattern;
+    this._callbacks = descriptor._callbacks.slice();
+    this._parsed = [];
     this.state = "parsing";
-    this.callbacks = descriptor.callbacks.slice();
-    this.parsed = [];
 }
 
 SymbolAutomaton.prototype.parse = function (symbol) {
-    if (this.state === "parsing" && match(this.pattern, symbol)) {
+    this._parsed.push(symbol);
+    if (this.state === "parsing" && match(this._pattern, symbol)) {
         this.state = "accepting";
     } else {
         this.state = "stopped";
+    }
+    if (this.state === "accepting") {
+        utils.executeFunctions(this._callbacks, [this._parsed]);
     }
 };
 

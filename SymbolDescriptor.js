@@ -1,8 +1,8 @@
 var SymbolAutomaton = require("./SymbolAutomaton");
 
 function SymbolDescriptor (pattern) {
-    this.pattern = pattern;
-    this.callbacks = [];
+    this._pattern = pattern;
+    this._callbacks = [];
 }
 
 SymbolDescriptor.prototype.newAutomaton = function () {
@@ -10,7 +10,7 @@ SymbolDescriptor.prototype.newAutomaton = function () {
 };
 
 SymbolDescriptor.prototype.whenever = function (callback) {
-    this.callbacks.push(callback);
+    this._callbacks.push(callback);
 };
 
 module.exports = SymbolDescriptor;

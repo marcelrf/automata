@@ -6,71 +6,34 @@ var infiniteAutomatonError = {
 };
 
 function RepeatAutomaton (descriptor) {
-    this.descriptor = descriptor.operand;
-    this.minimum = descriptor.minimum;
-    this.maximum = descriptor.maximum;
-    this.automata = {};
-    launchAutomaton.call(this, 1);
-    if (this.minimum === 0) {
-        this.state = "accepting";
-    } else {
-        this.state = getState.call(this);
-    }
-    this.callbacks = descriptor.callbacks.slice();
-    this.parsed = [];
+    this._descriptor = descriptor._operand;
+    this._minimum = descriptor._minimum;
+    this._maximum = descriptor._maximum;
+    this._automata = {};
+    this._callbacks = descriptor._callbacks.slice();
+    this._parsed = [];
+    this._launchAutomaton(1);
+    this.state = this._minimum === 0 ? "accepting" : this._getState();
 }
 
-RepeatAutomaton.prototype.parse = function (symbol) {
-    var that = this;
-    // make all automatons parse the symbol
-    utils.forEachOwnProperty(this.automata, function (level) {
-        level.forEach(function (automaton) {
-            automaton.parse(symbol);
-        });
-    });
-    this.parsed.push(symbol);
-    // remove stopped automatons
-    utils.forEachOwnProperty(this.automata, function (level, index) {
-        that.automata[index] = level.filter(function (automaton) {
-            return automaton.state !== "stopped";
-        });
-        if (that.automata[index].length === 0) {
-            delete that.automata[index];
-        }
-    });
-    // when level i accepts, launch automaton for level i+1
-    utils.forEachOwnProperty(this.automata, function (level, index) {
-        var accepting = that.automata[index].some(function (automaton) {
-            return automaton.state === "accepting";
-        });
-        if (accepting) {
-            launchAutomaton.call(that, index + 1);
-        }
-    });
-    this.state = getState.call(this);
-    if (this.state === "accepting") {
-        utils.executeFunctions(this.callbacks, [this.parsed]);
-    }
-};
-
-function launchAutomaton (level) {
-    var automaton = this.descriptor.newAutomaton();
+RepeatAutomaton.prototype._launchAutomaton = function (level) {
+    var automaton = this._descriptor.newAutomaton();
     if (automaton.state === "accepting") {
         // TODO: this situation could be detected in descriptor time (annullable)
         throw infiniteAutomatonError;
     } else if (automaton.state === "parsing") {
-        if (!this.automata[level]) { this.automata[level] = []; }
-        this.automata[level].push(automaton);
+        if (!this._automata[level]) { this._automata[level] = []; }
+        this._automata[level].push(automaton);
     }
-}
+};
 
-function getState () {
+RepeatAutomaton.prototype._getState = function () {
     var count = 0,
         accepting = false,
         that = this;
-    utils.forEachOwnProperty(this.automata, function (level, index) {
+    utils.forEachOwnProperty(this._automata, function (level, index) {
         count += level.length;
-        if (index >= that.minimum && index <= that.maximum) {
+        if (index >= that._minimum && index <= that._maximum) {
             accepting = accepting || level.some(function (automaton) {
                 return automaton.state === "accepting";
             });
@@ -79,6 +42,40 @@ function getState () {
     if (accepting) { return "accepting"; }
     else if (count > 0) { return "parsing"; }
     else { return "stopped"; }
-}
+};
+
+RepeatAutomaton.prototype.parse = function (symbol) {
+    var that = this;
+    // make all automatons parse the symbol
+    utils.forEachOwnProperty(this._automata, function (level) {
+        level.forEach(function (automaton) {
+            automaton.parse(symbol);
+        });
+    });
+    this._parsed.push(symbol);
+    // remove stopped automatons
+    utils.forEachOwnProperty(this._automata, function (level, index) {
+        that._automata[index] = level.filter(function (automaton) {
+            return automaton.state !== "stopped";
+        });
+        if (that._automata[index].length === 0) {
+            delete that._automata[index];
+        }
+    });
+    // when level i accepts, launch automaton for level i+1
+    utils.forEachOwnProperty(this._automata, function (level, index) {
+        var accepting = that._automata[index].some(function (automaton) {
+            return automaton.state === "accepting";
+        });
+        if (accepting) {
+            that._launchAutomaton(index + 1);
+        }
+    });
+    // update state
+    this.state = this._getState();
+    if (this.state === "accepting") {
+        utils.executeFunctions(this._callbacks, [this._parsed]);
+    }
+};
 
 module.exports = RepeatAutomaton;

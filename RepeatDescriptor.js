@@ -1,10 +1,10 @@
 var RepeatAutomaton = require("./RepeatAutomaton");
 
 function RepeatDescriptor (minimum, maximum, descriptor) {
-    this.minimum = minimum;
-    this.maximum = maximum;
-    this.operand = descriptor;
-    this.callbacks = [];
+    this._minimum = minimum;
+    this._maximum = maximum;
+    this._operand = descriptor;
+    this._callbacks = [];
 }
 
 RepeatDescriptor.prototype.newAutomaton = function () {
@@ -12,7 +12,7 @@ RepeatDescriptor.prototype.newAutomaton = function () {
 };
 
 RepeatDescriptor.prototype.whenever = function (callback) {
-    this.callbacks.push(callback);
+    this._callbacks.push(callback);
 };
 
 module.exports = RepeatDescriptor;

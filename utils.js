@@ -31,5 +31,6 @@ function getType (value) {
 module.exports = {
 	forEachOwnProperty: forEachOwnProperty,
 	everyOwnProperty: everyOwnProperty,
+    executeFunctions: executeFunctions,
     getType: getType
 };
