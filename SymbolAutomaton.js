@@ -53,13 +53,18 @@ function match (pattern, data) {
         // and matches when the returned value evaluates to true
         return !!pattern(data);
     }
+    else if (patternType === "Date") {
+        if (dataType === "Date") {
+            // matches when both timestamps are equal
+            return pattern.getTime() === data.getTime();
+        } else {
+            return false;
+        }
+    }
     else if (patternType === "RegExp") {
         if (dataType === "String") {
             // matches when the data string matches the pattern
             return !!data.match(pattern);
-        } else if (dataType == "RegExp") {
-            // matches when the regexps are equal
-            return pattern === data;
         } else {
             return false;
         }
