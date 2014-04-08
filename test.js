@@ -6,3 +6,4 @@ function testSuite (Suite) {
 }
 
 testSuite(require("./SymbolTest"));
+testSuite(require("./SequenceTest"));
