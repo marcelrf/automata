@@ -32,9 +32,9 @@ module.exports = [
         var operand = newFakeDescriptor(["parsing", "accepting", "stopped"]),
             descriptor = new SequenceDescriptor(operand, operand),
             automaton = descriptor.newAutomaton();
-        automaton.parse("symbol1");
-        automaton.parse("symbol2");
-        automaton.parse("symbol3");
+        automaton.parse();
+        automaton.parse();
+        automaton.parse();
         assert(automaton.state === "stopped");
     },
 
@@ -42,8 +42,8 @@ module.exports = [
         var operand = newFakeDescriptor(["parsing", "stopped"]),
             descriptor = new SequenceDescriptor(operand, operand),
             automaton = descriptor.newAutomaton();
-        automaton.parse("symbol1");
-        automaton.parse("symbol2");
+        automaton.parse();
+        automaton.parse();
         assert(automaton.state === "stopped");
     }
 
