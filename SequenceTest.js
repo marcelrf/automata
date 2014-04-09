@@ -20,29 +20,42 @@ function newFakeDescriptor (states) {
 
 module.exports = [
 
-    function testParsing () {
-        var operand1 = newFakeDescriptor(["parsing"]),
-            operand2 = newFakeDescriptor(["parsing"]),
-            descriptor = new SequenceDescriptor(operand1, operand2),
-            automaton = descriptor.newAutomaton();
-        assert(automaton.state === "parsing");
-    },
-
-    function testStoppedAfterAccept () {
+    function testSimpleOperands () {
         var operand = newFakeDescriptor(["parsing", "accepting", "stopped"]),
-            descriptor = new SequenceDescriptor(operand, operand),
-            automaton = descriptor.newAutomaton();
+            automaton = new SequenceDescriptor(operand, operand).newAutomaton();
+        assert(automaton.state === "parsing");
         automaton.parse();
+        assert(automaton.state === "parsing");
         automaton.parse();
+        assert(automaton.state === "accepting");
         automaton.parse();
         assert(automaton.state === "stopped");
     },
 
-    function testStoppedAfterStopped () {
-        var operand = newFakeDescriptor(["parsing", "stopped"]),
-            descriptor = new SequenceDescriptor(operand, operand),
-            automaton = descriptor.newAutomaton();
+    function testAnnulableOperands () {
+        var operand = newFakeDescriptor(["accepting", "stopped"]),
+            automaton = new SequenceDescriptor(operand, operand).newAutomaton();
+        assert(automaton.state === "accepting");
         automaton.parse();
+        assert(automaton.state === "stopped");
+    },
+
+    function testMultiAcceptOperands () {
+        var operand = newFakeDescriptor(["parsing", "accepting", "parsing", "accepting", "stopped"]),
+            automaton = new SequenceDescriptor(operand, operand).newAutomaton();
+        assert(automaton.state === "parsing");
+        automaton.parse();
+        assert(automaton.state === "parsing");
+        automaton.parse();
+        assert(automaton.state === "accepting");
+        automaton.parse();
+        assert(automaton.state === "parsing");
+        automaton.parse();
+        assert(automaton.state === "accepting");
+        automaton.parse();
+        assert(automaton.state === "parsing");
+        automaton.parse();
+        assert(automaton.state === "accepting");
         automaton.parse();
         assert(automaton.state === "stopped");
     }
