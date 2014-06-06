@@ -32,6 +32,7 @@ text.split(" ").forEach(function (token) {
 ```
 This will output the following:
 ```
-Treebeard is the oldest of three remaining original Ents .
-Treebeard later realised that while Saruman had learned much from him , the Wizard had shared no useful information of his own .
+. Treebeard is the oldest of three remaining original Ents .
+. The arrival of Merry and Pippin shifted Treebeard 's attention to take action against Saruman for hacking down his trees .
+. Treebeard later realised that while Saruman had learned much from him , the Wizard had shared no useful information of his own .
 ```
