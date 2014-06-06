@@ -6,7 +6,7 @@ Execute your custom code whenever that happens.
 
 ---------
 
-This project is still under construction, but the main functionalities are already working.
+**This project is still under construction**, but the main functionalities are already working.
 Example follows:
 
 1. Extract the sentences that contain the name Treebeard from a text.
