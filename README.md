@@ -7,7 +7,7 @@ Execute your custom code whenever that happens.
 ---------
 
 This project is still under construction, but the main functionalities are already working.
-Some examples follow:
+Example follows:
 
 1. Extract the sentences that contain the name Treebeard from a text.
 
